@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List
 from shared.utils import debug_log
 from shared.constants import (
     MIN_PRICES_BEFORE_NULL,
