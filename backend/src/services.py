@@ -34,6 +34,7 @@ def _convert_slugs_to_port_codes(
         raise NotFoundException(
             f"{orig}: Is neither a region or a port code"
         )
+
     if len(dest_codes) == 0:
         raise NotFoundException(
             f"{dest}: Is neither a region or a port code"

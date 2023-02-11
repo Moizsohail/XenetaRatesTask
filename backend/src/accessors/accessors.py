@@ -37,7 +37,6 @@ def get_port_codes_from_region_slug(
         (selected_slug,),
     )
     data = cursor.fetchall()
-
     if len(data) == 0:
         return []
 
@@ -49,10 +48,9 @@ def get_port_codes_from_region_slug(
         f"""
         SELECT code FROM ports WHERE parent_slug = ANY(%s);
         """,
-        (to_sql_array(slugs_with_parent_selected_slug),),
+        (slugs_with_parent_selected_slug,),
     )
     port_codes = [str(row[0]) for row in cursor.fetchall()]
-
     return port_codes
 
 
@@ -98,17 +96,18 @@ def get_average_prices_service(
         (
             params.start_date,
             params.end_date,
-            to_sql_array(params.orig_codes),
-            to_sql_array(params.dest_codes),
+            params.orig_codes,
+            params.dest_codes,
         ),
     )
 
     data = cursor.fetchall()
+    print(data)
     return list(
         [
             GetPricesResponse(
                 day=row[0].strftime("%Y-%m-%d"),
-                average_price=float(row[1])
+                average_price=round(float(row[1]))
                 if row[2] > MIN_PRICES_BEFORE_NULL
                 else None,
             )

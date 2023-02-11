@@ -27,6 +27,23 @@ def test_get_rates_api(client: FlaskClient):
     assert len(data) == 18
 
 
+def test_get_rates_api(client: FlaskClient):
+    response = client.get(
+        "/rates?date_from=2016-01-01&date_to=2016-01-20&origin=CNCWN&destination=NOTRD"
+    )
+    assert response.status_code == 200
+    data = json.loads(response.get_data())
+    assert len(data) == 18
+    total_non_null_average_price = len(
+        [
+            row
+            for row in data
+            if row["average_price"] != None
+        ]
+    )
+    assert total_non_null_average_price == 0
+
+
 @pytest.mark.parametrize(
     "date_from, date_to, origin, destination,"
     " status_code, error_message",
