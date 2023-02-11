@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  xeneta-test-postgres:
+    image: postgres:12
+    build:
+      context: db
+      dockerfile: pytest.Dockerfile
+    container_name: xeneta-test-postgres
+    hostname: db
+    networks:
+      - xeneta-test-net
+    volumes:
+      - ./test-dbdump:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=ratestask
+      - POSTGRES_DB=test
+
+  xeneta-test-api:
+    depends_on:
+      'xeneta-test-postgres':
+        condition: service_started
+    build:
+      context: backend
+      dockerfile: pytest.Dockerfile
+    container_name: xeneta-test-api
+    hostname: xeneta-test-api
+    tty: true
+    networks:
+      - xeneta-test-net
+    volumes: # FOR DEBUGGING
+      - ./backend:/backend
+    environment:
+      - DB_HOST=xeneta-test-postgres
+      - DB_NAME=test
+      - DB_USER=root
+      - DB_PASSWORD=ratestask
+      - FLASK_APP=src/application.py
+      - FLASK_DEBUG=true
+
+networks:
+  xeneta-test-net:
+    driver: bridge

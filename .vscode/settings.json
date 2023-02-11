@@ -1,0 +1,7 @@
+{
+  "python.autoComplete.extraPaths": ["./backend/src"],
+  "python.analysis.extraPaths": ["./backend/src"],
+  "python.linting.mypyEnabled": false,
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true
+}

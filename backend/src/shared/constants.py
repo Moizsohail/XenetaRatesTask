@@ -1,0 +1,7 @@
+import logging
+
+
+MIN_PRICES_BEFORE_NULL = 3
+LOGGING_LEVEL = logging.DEBUG
+
+WAIT_FOR_DB_IN_SECONDS = 10

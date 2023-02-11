@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  xeneta-postgres:
+    image: postgres:12
+    build:
+      context: db
+    container_name: xeneta-postgres
+    hostname: db
+    networks:
+      - xeneta-net
+    volumes:
+      - ./dbdump:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=ratestask
+      - POSTGRES_DB=xeneta
+    ports:
+      - 5432:5432
+
+  xeneta-api:
+    depends_on:
+      "xeneta-postgres":
+        condition: service_started
+    build:
+      context: backend
+    container_name: xeneta-api
+    hostname: xeneta-api
+    command: flask run --host 0.0.0.0 
+    networks:
+      - xeneta-net
+    volumes: # FOR DEBUGGING
+      - ./backend:/backend
+    ports:
+      - 5000:5000
+    environment:
+      - DB_HOST=xeneta-postgres
+      - DB_NAME=xeneta
+      - DB_USER=root
+      - DB_PASSWORD=ratestask
+      - FLASK_APP=src/application.py
+      - FLASK_DEBUG=true
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+networks:
+  xeneta-net:
+    driver: bridge
