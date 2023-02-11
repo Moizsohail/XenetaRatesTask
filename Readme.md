@@ -32,25 +32,27 @@ The following indexes have been added to optimize the database:
 
 ```
 📦backend
-┣ 📂src
-┃ ┣ 📂accessors
-┃ ┃ ┣ 📜__init__.py
-┃ ┃ ┗ 📜accessors.py
-┃ ┣ 📂shared
-┃ ┃ ┣ 📜constants.py
-┃ ┃ ┣ 📜specs.py
-┃ ┃ ┗ 📜utils.py
-┃ ┣ 📂tests
-┃ ┃ ┣ 📜__init__.py
-┃ ┃ ┣ 📜conftest.py
-┃ ┃ ┗ 📜handler_test.py
-┃ ┣ 📜application.py
-┃ ┣ 📜logs.log
-┃ ┣ 📜services.py
-┃ ┗ 📜validators.py
-┣ 📜Dockerfile
-┣ 📜pytest.Dockerfile
-┗ 📜requirements.txt
+ ┣ 📂src
+ ┃ ┣ 📂accessors
+ ┃ ┃ ┣ 📜__init__.py
+ ┃ ┃ ┗ 📜accessors.py
+ ┃ ┣ 📂shared
+ ┃ ┃ ┣ 📜constants.py
+ ┃ ┃ ┣ 📜specs.py
+ ┃ ┃ ┗ 📜utils.py
+ ┃ ┣ 📂tests
+ ┃ ┃ ┣ 📜__init__.py
+ ┃ ┃ ┣ 📜accessor_test.py
+ ┃ ┃ ┣ 📜conftest.py
+ ┃ ┃ ┗ 📜handler_test.py
+ ┃ ┣ 📜application.py
+ ┃ ┣ 📜logs.log
+ ┃ ┣ 📜services.py
+ ┃ ┗ 📜validators.py
+ ┣ 📜Dockerfile
+ ┣ 📜logs.log
+ ┣ 📜pytest.Dockerfile
+ ┗ 📜requirements.txt
 ```
 
 ## Statistics

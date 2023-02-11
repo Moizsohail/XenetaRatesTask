@@ -78,8 +78,7 @@ def test_get_rates_api(client: FlaskClient):
             "doesnt_exist",
             "scandinavia",
             404,
-            "doesnt_exist: Is neither a region or a port"
-            " code",
+            "doesnt_exist: Port/Region doesn't exist",
         ),
     ],
 )

@@ -1,29 +1,23 @@
-from typing import List
-from shared.utils import debug_log, to_sql_array
+from typing import Dict, List
+from shared.utils import debug_log
 from shared.constants import (
     MIN_PRICES_BEFORE_NULL,
 )
 from shared.specs import (
-    GetPricesParams,
+    GetPricesByDayParams,
     GetPricesResponse,
     VerifyPortCodeParams,
     VerifyPortCodeResponse,
 )
+from validators import NotFoundException
 
 
-import application as app
-
-
-@debug_log
-def get_port_codes_from_region_slug(
-    cursor, selected_slug
-) -> List[str]:
-    # This task can be accomplished in a single SQL. But I have broken it
-    # down to accomodate readability
-
+def _get_region_descendents(cursor, parent_slug):
     # recursively get all child_slugs
     # Resource used: https://learnsql.com/blog/sql-recursive-cte/
 
+    # I have added a recursive logic because if a user is looking for a cost to/from
+    # a country. It should be acceptable to include charges to/from a city within that country.
     cursor.execute(
         """
             with recursive slugs as (select slug from regions where parent_slug = %s
@@ -34,21 +28,33 @@ def get_port_codes_from_region_slug(
             )
             select slug from slugs;
         """,
-        (selected_slug,),
+        (parent_slug,),
     )
     data = cursor.fetchall()
     if len(data) == 0:
         return []
-
     slugs_with_parent_selected_slug = [
         row[0] for row in data
     ]
+    return slugs_with_parent_selected_slug
+
+
+@debug_log
+def get_port_codes_from_region_slug(
+    cursor, selected_slug
+) -> List[str]:
+    descendent_slug = _get_region_descendents(
+        cursor, selected_slug
+    ) + [selected_slug]
+
+    if len(selected_slug) == 0:
+        return []
 
     cursor.execute(
         f"""
         SELECT code FROM ports WHERE parent_slug = ANY(%s);
         """,
-        (slugs_with_parent_selected_slug,),
+        (descendent_slug,),
     )
     port_codes = [str(row[0]) for row in cursor.fetchall()]
     return port_codes
@@ -73,9 +79,18 @@ def verify_port_code(
 
 
 @debug_log
-def get_average_prices_service(
-    cursor, params: GetPricesParams
-):
+def verify_region_slug(cursor, region_slug: str) -> bool:
+    sql: str = """
+            SELECT slug FROM regions WHERE slug = %s;
+        """
+    cursor.execute(sql, (region_slug,))
+    return len([slug for slug in cursor.fetchall()]) == 1
+
+
+@debug_log
+def get_average_prices_by_day(
+    cursor, params: GetPricesByDayParams
+) -> List[GetPricesResponse]:
     # This task can be accomplished in a single SQL. But I have broken it
     # down to accomodate readability
 
@@ -102,7 +117,7 @@ def get_average_prices_service(
     )
 
     data = cursor.fetchall()
-    print(data)
+
     return list(
         [
             GetPricesResponse(

@@ -4,7 +4,7 @@ from typing import List, Optional
 
 
 @dataclass
-class GetPricesParams:
+class GetPricesByDayParams:
     start_date: str
     end_date: str
     orig_codes: List[str]

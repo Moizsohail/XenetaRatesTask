@@ -2,12 +2,13 @@ from typing import List
 from accessors import get_db
 from accessors.accessors import (
     get_port_codes_from_region_slug,
-    get_average_prices_service,
+    get_average_prices_by_day,
     verify_port_code,
+    verify_region_slug,
 )
 from shared.specs import (
     GetApiRatesParams,
-    GetPricesParams,
+    GetPricesByDayParams,
     GetPricesResponse,
     VerifyPortCodeParams,
 )
@@ -22,23 +23,23 @@ def _convert_slugs_to_port_codes(
     orig_codes = [orig]
     dest_codes = [dest]
     if not port_code_verified.orig_code_exists:
+        if not verify_region_slug(cursor, orig):
+            raise NotFoundException(
+                f"{orig}: Port/Region doesn't exist"
+            )
+
         orig_codes = get_port_codes_from_region_slug(
             cursor, orig
         )
     if not port_code_verified.dest_code_exists:
+        if not verify_region_slug(cursor, dest):
+            raise NotFoundException(
+                f"{dest}: Port/Region doesn't exist"
+            )
         dest_codes = get_port_codes_from_region_slug(
             cursor, dest
         )
 
-    if len(orig_codes) == 0:
-        raise NotFoundException(
-            f"{orig}: Is neither a region or a port code"
-        )
-
-    if len(dest_codes) == 0:
-        raise NotFoundException(
-            f"{dest}: Is neither a region or a port code"
-        )
     return orig_codes, dest_codes
 
 
@@ -55,9 +56,9 @@ def get_api_rates(
             cursor, params.orig, params.dest
         )
 
-        prices = get_average_prices_service(
+        prices = get_average_prices_by_day(
             cursor,
-            GetPricesParams(
+            GetPricesByDayParams(
                 start_date=params.date_from,
                 end_date=params.date_to,
                 orig_codes=orig_codes,
