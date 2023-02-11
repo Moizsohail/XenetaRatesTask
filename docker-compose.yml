@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   xeneta-postgres:
@@ -21,13 +21,13 @@ services:
 
   xeneta-api:
     depends_on:
-      "xeneta-postgres":
+      'xeneta-postgres':
         condition: service_started
     build:
       context: backend
     container_name: xeneta-api
     hostname: xeneta-api
-    command: flask run --host 0.0.0.0 
+    command: flask run --host 0.0.0.0
     networks:
       - xeneta-net
     volumes: # FOR DEBUGGING
