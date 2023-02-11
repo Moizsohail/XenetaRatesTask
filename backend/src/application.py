@@ -1,4 +1,3 @@
-import logging
 from flask import Flask
 from logging import Formatter, FileHandler
 from dataclasses import asdict

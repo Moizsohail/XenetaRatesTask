@@ -1,8 +1,4 @@
 FROM python:3.8-slim as base
-# ENV PYTHONDONTWRITEBYTECODE=1
-# ENV PYTHONUNBUFFERED=1
-# ENV APP_ENV local
-
 
 
 COPY requirements.txt /requirements.txt

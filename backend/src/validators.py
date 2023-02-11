@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 import re
 from flask import request
 from shared.specs import GetApiRatesQuery

@@ -2,7 +2,7 @@ from time import sleep
 import psycopg2
 import os
 
-from flask import current_app, g
+from flask import g
 
 from shared.constants import WAIT_FOR_DB_IN_SECONDS
 

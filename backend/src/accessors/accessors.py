@@ -9,7 +9,6 @@ from shared.specs import (
     VerifyPortCodeParams,
     VerifyPortCodeResponse,
 )
-from validators import NotFoundException
 
 
 def _get_region_descendents(cursor, parent_slug):
