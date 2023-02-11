@@ -82,6 +82,9 @@ def test_get_port_codes_from_region_slug__recursively_find_parents(
 
             assert result == expected_codes
 
+            # Please note that I have specifically not added
+            # commit at this point as I wanted to remove
+            # the freshly added regions and ports.
             cursor.execute("DELETE FROM prices")
             cursor.execute("DELETE FROM ports")
             cursor.execute("DELETE FROM regions")
