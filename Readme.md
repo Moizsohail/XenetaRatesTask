@@ -16,8 +16,45 @@ One assumption I made was with regards to region codes. I assumed that if a user
 
 To run the project, execute the following command:
 
-```
+```bash
 docker-compose up --build
+```
+
+### Test API
+
+```
+http://localhost:5000/rates?date_from=2016-01-01&date_to=2016-01-20&origin=CNCWN&destination=scandinavia
+```
+
+**Expected Output**
+
+```json
+[
+    {
+    "average_price": 1739,
+    "day": "2016-01-01"
+    },
+    {
+    "average_price": 1738,
+    "day": "2016-01-02"
+    },
+    {
+    "average_price": 1729,
+    "day": "2016-01-05"
+    },
+    {
+    "average_price": 1728,
+    "day": "2016-01-06"
+    },
+    {
+    "average_price": 1696,
+    "day": "2016-01-07"
+    },
+    {
+    "average_price": 1630,
+    "day": "2016-01-08"
+    },
+...
 ```
 
 ## Testing the Project

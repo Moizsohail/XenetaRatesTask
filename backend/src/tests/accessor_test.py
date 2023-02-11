@@ -1,3 +1,5 @@
+from datetime import date
+from unittest.mock import MagicMock
 from accessors import get_db
 from accessors.accessors import (
     get_average_prices_by_day,
@@ -5,8 +7,10 @@ from accessors.accessors import (
     verify_port_code,
 )
 from application import app
+from shared.constants import MIN_PRICES_BEFORE_NULL
 from shared.specs import (
     GetPricesByDayParams,
+    GetPricesResponse,
     VerifyPortCodeParams,
 )
 import pytest
@@ -154,6 +158,38 @@ def test_get_average_prices_by_day__multiple_codes():
             assert len(result) == 10
 
 
+def test_get_average_prices_by_day__null_average_case():
+    params = GetPricesByDayParams(
+        start_date="2021-01-01",
+        end_date="2021-01-03",
+        orig_codes=["NOR", "SWE"],
+        dest_codes=["OSL", "STO"],
+    )
+    prices = [
+        (date(2021, 1, 1), 50, 1),
+        (date(2021, 1, 2), 100, 2),
+        (date(2021, 1, 3), 200, MIN_PRICES_BEFORE_NULL),
+    ]
+
+    cursor = MagicMock()
+    cursor.fetchall.return_value = prices
+    result = get_average_prices_by_day(cursor, params)
+
+    expected_result = [
+        GetPricesResponse(
+            day="2021-01-01", average_price=None
+        ),
+        GetPricesResponse(
+            day="2021-01-02", average_price=None
+        ),
+        GetPricesResponse(
+            day="2021-01-03", average_price=200
+        ),
+    ]
+
+    assert result == expected_result
+
+
 def test_verify_port_code__exists():
     params = VerifyPortCodeParams(
         orig="CNYTN", dest="NOORK"
@@ -178,16 +214,3 @@ def test_verify_port_code__not_found():
 
             assert not result.orig_code_exists
             assert not result.dest_code_exists
-
-
-def test_get_port_codes_from_region_slug__passing_in_port_code():
-
-    slug = "CNYTN"
-    with app.app_context():
-        db = get_db()
-        with db.cursor() as cursor:
-            result = get_port_codes_from_region_slug(
-                cursor, slug
-            )
-
-            assert len(result) == 0

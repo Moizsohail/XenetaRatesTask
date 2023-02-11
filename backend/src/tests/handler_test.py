@@ -3,7 +3,7 @@ import pytest
 from flask.testing import FlaskClient
 
 
-def test_get_rates_api_with_sql_injection(
+def test_get_rates_api__with_sql_injection(
     client: FlaskClient,
 ):
     response = client.get(
@@ -27,9 +27,14 @@ def test_get_rates_api(client: FlaskClient):
     assert len(data) == 18
 
 
-def test_get_rates_api(client: FlaskClient):
+def test_get_rates_api__null_case(client: FlaskClient):
+    # used the following query to find origin_codes and dest_codes
+    # SELECT orig_code, dest_code, day
+    # FROM prices
+    # GROUP BY orig_code, dest_code, day
+    # HAVING COUNT(*) < 3
     response = client.get(
-        "/rates?date_from=2016-01-01&date_to=2016-01-20&origin=CNCWN&destination=NOTRD"
+        "/rates?date_from=2016-01-01&date_to=2016-01-20&origin=CNSGH&destination=LVRIX"
     )
     assert response.status_code == 200
     data = json.loads(response.get_data())
@@ -41,6 +46,7 @@ def test_get_rates_api(client: FlaskClient):
             if row["average_price"] != None
         ]
     )
+
     assert total_non_null_average_price == 0
 
 
@@ -82,7 +88,7 @@ def test_get_rates_api(client: FlaskClient):
         ),
     ],
 )
-def test_get_rates_api_failure_states(
+def test_get_rates_api__failure_states(
     client: FlaskClient,
     date_from,
     date_to,

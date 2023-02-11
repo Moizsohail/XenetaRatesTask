@@ -122,7 +122,7 @@ def get_average_prices_by_day(
             GetPricesResponse(
                 day=row[0].strftime("%Y-%m-%d"),
                 average_price=round(float(row[1]))
-                if row[2] > MIN_PRICES_BEFORE_NULL
+                if row[2] >= MIN_PRICES_BEFORE_NULL
                 else None,
             )
             for row in data
